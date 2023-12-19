@@ -1,5 +1,4 @@
 import * as dns from 'dns';
-import ConnectionString from 'mongodb-connection-string-url';
 import { URLSearchParams } from 'url';
 
 import type { Document } from './bson';
@@ -223,8 +222,19 @@ class CaseInsensitiveMap<Value = any> extends Map<string, Value> {
   }
 }
 
+/**
+ * @public
+ */
+export interface ConnectionUrl extends URL {
+  hosts: Array<string>;
+  isSRV: boolean;
+  pathname: string;
+  username: string;
+  password: string;
+}
+
 export function parseOptions(
-  uri: string,
+  url: ConnectionUrl,
   mongoClient: MongoClient | MongoClientOptions | undefined = undefined,
   options: MongoClientOptions = {}
 ): MongoOptions {
@@ -242,7 +252,6 @@ export function parseOptions(
     throw new MongoAPIError('Must request either bigint or Long for int64 deserialization');
   }
 
-  const url = new ConnectionString(uri);
   const { hosts, isSRV } = url;
 
   const mongoOptions = Object.create(null);
@@ -442,7 +451,7 @@ export function parseOptions(
 
   if (mongoClient && mongoOptions.autoEncryption) {
     Encrypter.checkForMongoCrypt();
-    mongoOptions.encrypter = new Encrypter(mongoClient, uri, options);
+    mongoOptions.encrypter = new Encrypter(mongoClient, url, options);
     mongoOptions.autoEncrypter = mongoOptions.encrypter.autoEncrypter;
   }
 

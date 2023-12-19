@@ -6,6 +6,7 @@ import {
 
 import { deserialize, type Document, serialize } from '../bson';
 import { type CommandOptions, type ProxyOptions } from '../cmap/connection';
+import { type ConnectionUrl } from '../connection_string';
 import { getMongoDBClientEncryption } from '../deps';
 import { MongoRuntimeError } from '../error';
 import { MongoClient, type MongoClientOptions } from '../mongo_client';
@@ -128,7 +129,7 @@ export interface AutoEncryptionOptions {
      * A local process the driver communicates with to determine how to encrypt values in a command.
      * Defaults to "mongodb://%2Fvar%2Fmongocryptd.sock" if domain sockets are available or "mongodb://localhost:27020" otherwise
      */
-    mongocryptdURI?: string;
+    mongocryptdURI?: ConnectionUrl;
     /** If true, autoEncryption will not attempt to spawn a mongocryptd before connecting  */
     mongocryptdBypassSpawn?: boolean;
     /** The path to the mongocryptd executable on the system */

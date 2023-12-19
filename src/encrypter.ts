@@ -1,6 +1,7 @@
 import { callbackify } from 'util';
 
 import { AutoEncrypter, type AutoEncryptionOptions } from './client-side-encryption/auto_encrypter';
+import { type ConnectionUrl } from './connection_string';
 import { MONGO_CLIENT_EVENTS } from './constants';
 import { getMongoDBClientEncryption } from './deps';
 import { MongoInvalidArgumentError, MongoMissingDependencyError } from './error';
@@ -23,7 +24,7 @@ export class Encrypter {
   needsConnecting: boolean;
   autoEncrypter: AutoEncrypter;
 
-  constructor(client: MongoClient, uri: string, options: MongoClientOptions) {
+  constructor(client: MongoClient, uri: ConnectionUrl, options: MongoClientOptions) {
     if (typeof options.autoEncryption !== 'object') {
       throw new MongoInvalidArgumentError('Option "autoEncryption" must be specified');
     }
@@ -59,7 +60,11 @@ export class Encrypter {
     this.autoEncrypter = new AutoEncrypter(client, options.autoEncryption);
   }
 
-  getInternalClient(client: MongoClient, uri: string, options: MongoClientOptions): MongoClient {
+  getInternalClient(
+    client: MongoClient,
+    uri: ConnectionUrl,
+    options: MongoClientOptions
+  ): MongoClient {
     // TODO(NODE-4144): Remove new variable for type narrowing
     let internalClient = this[kInternalClient];
     if (internalClient == null) {

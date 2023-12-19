@@ -1,5 +1,6 @@
 import type { ChildProcess } from 'child_process';
 
+import { type ConnectionUrl } from '../connection_string';
 import { MongoNetworkTimeoutError } from '../error';
 import { type AutoEncryptionExtraOptions } from './auto_encrypter';
 
@@ -10,17 +11,22 @@ import { type AutoEncryptionExtraOptions } from './auto_encrypter';
 export class MongocryptdManager {
   static DEFAULT_MONGOCRYPTD_URI = 'mongodb://localhost:27020';
 
-  uri: string;
+  uri: ConnectionUrl;
   bypassSpawn: boolean;
   spawnPath: string;
   spawnArgs: Array<string>;
   _child?: ChildProcess;
 
   constructor(extraOptions: AutoEncryptionExtraOptions = {}) {
+    // FIXME
     this.uri =
-      typeof extraOptions.mongocryptdURI === 'string' && extraOptions.mongocryptdURI.length > 0
-        ? extraOptions.mongocryptdURI
-        : MongocryptdManager.DEFAULT_MONGOCRYPTD_URI;
+      extraOptions.mongocryptdURI ??
+      Object.assign(new URL('mongodb://localhost:27020'), {
+        username: '',
+        password: '',
+        hosts: ['localhost:27020'],
+        isSRV: true
+      });
 
     this.bypassSpawn = !!extraOptions.mongocryptdBypassSpawn;
 

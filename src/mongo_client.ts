@@ -16,7 +16,7 @@ import type { LEGAL_TCP_SOCKET_OPTIONS, LEGAL_TLS_SOCKET_OPTIONS } from './cmap/
 import type { Connection } from './cmap/connection';
 import type { ClientMetadata } from './cmap/handshake/client_metadata';
 import type { CompressorName } from './cmap/wire_protocol/compression';
-import { parseOptions, resolveSRVRecord } from './connection_string';
+import { type ConnectionUrl, parseOptions, resolveSRVRecord } from './connection_string';
 import { MONGO_CLIENT_EVENTS } from './constants';
 import { Db, type DbOptions } from './db';
 import type { Encrypter } from './encrypter';
@@ -290,7 +290,7 @@ export type WithSessionCallback<T = unknown> = (session: ClientSession) => Promi
 
 /** @internal */
 export interface MongoClientPrivate {
-  url: string;
+  url: ConnectionUrl;
   bsonOptions: BSONSerializeOptions;
   namespace: MongoDBNamespace;
   hasBeenClosed: boolean;
@@ -353,7 +353,7 @@ export class MongoClient extends TypedEventEmitter<MongoClientEvents> {
    */
   [kOptions]: MongoOptions;
 
-  constructor(url: string, options?: MongoClientOptions) {
+  constructor(url: ConnectionUrl, options?: MongoClientOptions) {
     super();
 
     this[kOptions] = parseOptions(url, this, options);
@@ -648,7 +648,7 @@ export class MongoClient extends TypedEventEmitter<MongoClientEvents> {
    *
    * @see https://www.mongodb.com/docs/manual/reference/connection-string/
    */
-  static async connect(url: string, options?: MongoClientOptions): Promise<MongoClient> {
+  static async connect(url: ConnectionUrl, options?: MongoClientOptions): Promise<MongoClient> {
     const client = new this(url, options);
     return client.connect();
   }

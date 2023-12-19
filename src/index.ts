@@ -293,6 +293,7 @@ export type { ConnectionPoolMetrics } from './cmap/metrics';
 export type { StreamDescription, StreamDescriptionOptions } from './cmap/stream_description';
 export type { CompressorName } from './cmap/wire_protocol/compression';
 export type { CollectionOptions, CollectionPrivate, ModifyResult } from './collection';
+export type { ConnectionUrl } from './connection_string';
 export type {
   CONNECTION_CHECK_OUT_FAILED,
   CONNECTION_CHECK_OUT_STARTED,
